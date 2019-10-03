@@ -1,0 +1,9 @@
+repository: peppol-bis-invoice-3
+home_dir: "/home/{{ ansible_user_id }}"
+sources_dir: "/vagrant"
+build_script: 'tools/bin/build.sh'
+html_root_dir: '/var/www/docs'
+html_dest_dir: '{{repository}}'
+version: master
+group_owner: www-data
+user_owner: www-data

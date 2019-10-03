@@ -1,0 +1,48 @@
+- name: ensure the old docker executables are not present
+  apt:
+    name: "{{ packages }}"
+    state: absent
+    purge: yes
+    autoclean: yes
+  vars:
+    packages:
+    - docker
+    - docker-engine
+    - docker.io
+    - containerd
+    - runc
+
+- name: ensure Docker CE required packages are present 
+  apt: 
+    name: "{{ packages }}"
+    state: latest
+    cache_valid_time: 3600
+    update_cache: yes
+  vars:
+    packages:
+    - apt-transport-https 
+    - ca-certificates 
+    - curl 
+    - gnupg-agent
+    - software-properties-common
+
+- name: ensure Docker CE Repository key is present
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: ensure Docker CE repository is present
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+    update_cache: yes
+  
+- name: install docker CE
+  apt:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+    - docker-ce 
+    - docker-ce-cli
+    - containerd.io

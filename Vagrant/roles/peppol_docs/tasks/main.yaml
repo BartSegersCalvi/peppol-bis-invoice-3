@@ -1,0 +1,24 @@
+- name: Building project using Erlend's script (Dockers)
+  shell: "bash {{build_script}}"
+  args:
+    chdir: '{{sources_dir}}'
+  become: yes
+
+- name: ensure html folder is present
+  file:
+    path: "{{html_root_dir}}/{{html_dest_dir}}"
+    state: directory
+    group: "{{group_owner}}"
+    owner: "{{user_owner}}"
+    mode: '0755'
+  become: yes
+    
+- name: Copy {{ repository }} html files to nginx folder
+  copy:
+    src: '{{sources_dir}}/target/site/'
+    dest: '{{html_root_dir}}/{{html_dest_dir}}'
+    remote_src: yes
+    owner: "{{user_owner}}"
+    group: "{{group_owner}}"
+    mode: '0755'
+  become: yes

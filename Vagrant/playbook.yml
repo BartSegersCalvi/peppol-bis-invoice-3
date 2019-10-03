@@ -1,0 +1,74 @@
+---
+# First the tasks that need a privileged user
+
+
+- name: Installation of common prerequisistes (Bootstrapping)
+  hosts: all
+  become: yes
+
+  roles:
+    - common
+
+- name: Installation of Docker CE
+  hosts: all
+  become: yes
+
+  roles:
+    - docker
+
+- name: Installation of Webserver preqs
+  hosts: all
+  tags: web
+  become: yes
+
+  roles:
+    - nginx
+
+####################### Docs Deployment ##################################
+- name: Nginx Preparation for docs deployment
+  hosts: all
+  tags: html
+
+  tasks:
+  - name: Create nginx server block for test-docs
+    template: 
+      src: nginx-server-block.j2
+      dest: /etc/nginx/sites-available/test-docs.peppol.eu
+    vars:
+      html_dir: /var/www/docs
+      server_name: _
+    become: yes
+ 
+  - name: enable test-docs site in nginx 
+    file:
+      src: /etc/nginx/sites-available/test-docs.peppol.eu
+      dest: /etc/nginx/sites-enabled/test-docs.peppol.eu
+      owner: www-data
+      group: www-data
+      state: link
+    become: yes
+
+  - name: disable default site in nginx 
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+    become: yes
+
+  - name: Reload nginx service
+    systemd:
+      name: nginx
+      state: reloaded
+      enabled: True
+    become: yes
+
+- name: Building {{repository}}
+  hosts: all
+  tags: html
+
+  vars:
+    repository: peppol-bis-invoice-3
+    html_dest_dir: poacc/billing/3.0/
+    build_script: build.sh
+
+  roles:
+    - peppol_docs

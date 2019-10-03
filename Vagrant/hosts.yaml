@@ -1,0 +1,4 @@
+all:
+    vars:
+        public_url: "docs.peppol.eu"
+        configure_ssl: False

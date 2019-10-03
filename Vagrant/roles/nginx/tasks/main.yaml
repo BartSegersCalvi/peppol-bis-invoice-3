@@ -1,0 +1,8 @@
+- name: install latest nginx web server
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
+
