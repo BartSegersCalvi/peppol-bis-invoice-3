@@ -1,8 +1,11 @@
 - name: Building project using Erlend's script (Dockers)
   shell: "bash {{build_script}}"
+  register: out
   args:
     chdir: '{{sources_dir}}'
   become: yes
+
+- debug: var=out.stdout_lines
 
 - name: ensure html folder is present
   file:
