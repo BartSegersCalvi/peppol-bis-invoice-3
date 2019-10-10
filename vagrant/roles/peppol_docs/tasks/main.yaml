@@ -25,3 +25,6 @@
     group: "{{group_owner}}"
     mode: '0755'
   become: yes
+
+- debug:
+    msg: "Deployed at: http://{{public_url}}/{{html_dest_dir}}"
